@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, Min } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, Min } from 'class-validator';
 
 export class AuthPayloadDto {
   @IsNotEmpty({ message: 'Email is required' })
@@ -6,6 +6,7 @@ export class AuthPayloadDto {
   email!: string;
 
   @IsNotEmpty({ message: 'Password is required' })
-  @Min(6, { message: 'Password must be at least 6 characters long' })
+  @IsString({ message: 'Password must be a string' })
+  @Min(5, { message: 'Password must be at least 5 characters long' })
   password!: string;
 }
