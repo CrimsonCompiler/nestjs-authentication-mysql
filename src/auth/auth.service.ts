@@ -1,29 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { AuthPayloadDto } from './dtos/auth.dto';
-
-const fakeUsers = [
-  {
-    id: 1,
-    email: 'tousif@example.com',
-    password: '123456',
-  },
-  {
-    id: 2,
-    email: 'john@example.com',
-    password: 'password123',
-  },
-];
+import { UsersService } from 'src/users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  validateUser(authPayload: AuthPayloadDto) {
-    const { email, password } = authPayload;
-    const findUser = fakeUsers.find((user) => user.email === email);
+  constructor(
+    private readonly usersService: UsersService,
+    private jwtService: JwtService,
+  ) {}
 
-    if (!findUser) return null;
+  async validateUser(authPayload: AuthPayloadDto) {
+    const user = await this.usersService.findByEmail(authPayload.email);
 
-    if(password === findUser.password) {
-      return findUser;
+    if (!user) {
+      throw new HttpException('User not found', 404);
     }
+    
   }
 }
